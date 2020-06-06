@@ -40,6 +40,23 @@ BEGIN GPL
   ELEMENT: point(position(ID*pain), color.interior(hospital))
 END GPL.
 
+*Scatterplot pain (mean) vs hospital.
+GGRAPH
+  /GRAPHDATASET NAME="graphdataset" VARIABLES=hospital MEAN(pain)[name="MEAN_pain"] 
+    MISSING=LISTWISE REPORTMISSING=NO
+  /GRAPHSPEC SOURCE=INLINE
+  /FITLINE TOTAL=NO.
+BEGIN GPL
+  SOURCE: s=userSource(id("graphdataset"))
+  DATA: hospital=col(source(s), name("hospital"), unit.category())
+  DATA: MEAN_pain=col(source(s), name("MEAN_pain"))
+  GUIDE: axis(dim(1), label("hospital"))
+  GUIDE: axis(dim(2), label("Mean pain"))
+  GUIDE: text.title(label("Simple Scatter Mean of pain by hospital"))
+  SCALE: linear(dim(2), include(0))
+  ELEMENT: point(position(hospital*MEAN_pain))
+END GPL. 
+
 *Random intercept model.
 DATASET ACTIVATE DataSet3.
 MIXED pain WITH age STAI_trait pain_cat cortisol_serum mindfulness gender
@@ -75,5 +92,3 @@ EXECUTE.
 
 COMPUTE RSS=(pain-Pain_predict)*(pain-Pain_predict).
 EXECUTE.
-
-
